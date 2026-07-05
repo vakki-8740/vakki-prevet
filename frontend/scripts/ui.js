@@ -304,40 +304,11 @@ async function uploadAvatar(event) {
 
 // Theme
 function initTheme() {
-  const saved = localStorage.getItem('theme') || 'auto';
-  setTheme(saved, false);
-}
-
-function setTheme(theme, save = true) {
-  if (save) localStorage.setItem('theme', theme);
-
-  let effective = theme;
-  if (theme === 'auto') {
-    effective = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-
-  document.documentElement.setAttribute('data-theme', effective);
-
+  document.documentElement.setAttribute('data-theme', 'light');
   document.querySelectorAll('.theme-option').forEach(opt => {
-    opt.classList.toggle('active', opt.dataset.theme === theme);
+    opt.classList.toggle('active', opt.dataset.theme === 'light');
   });
-
-  if (currentUser && save) {
-    API.put('/user/profile', { theme }).catch(() => {});
-  }
 }
-
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  setTheme(next);
-}
-
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-  if (localStorage.getItem('theme') === 'auto') {
-    setTheme('auto', false);
-  }
-});
 
 // Search
 let searchTimeout = null;
