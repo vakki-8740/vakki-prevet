@@ -8,9 +8,9 @@ const path = require('path');
 function authController(db) {
   const register = async (req, res) => {
     try {
-      const { name, username, email, password } = req.body;
-      if (!name || !email || !password) {
-        return res.status(400).json({ error: 'Name, email and password are required' });
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
       }
       if (password.length < 6) {
         return res.status(400).json({ error: 'Password must be at least 6 characters' });
@@ -19,23 +19,14 @@ function authController(db) {
       if (!emailRegex.test(email)) {
         return res.status(400).json({ error: 'Invalid email format' });
       }
-      if (username) {
-        const usernameRegex = /^[a-zA-Z0-9_]{3,30}$/;
-        if (!usernameRegex.test(username)) {
-          return res.status(400).json({ error: 'Username must be 3-30 characters, letters, numbers and underscores only' });
-        }
-        const existingUsername = db.prepare('SELECT id FROM users WHERE username = ?').get(username);
-        if (existingUsername) {
-          return res.status(409).json({ error: 'Username already taken' });
-        }
-      }
       const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
       if (existing) {
         return res.status(409).json({ error: 'Email already registered' });
       }
+      const name = email.split('@')[0];
       const hashedPassword = await bcrypt.hash(password, 12);
-      const result = db.prepare('INSERT INTO users (name, username, email, password) VALUES (?, ?, ?, ?)').run(
-        name, username || null, email, hashedPassword
+      const result = db.prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)').run(
+        name, email, hashedPassword
       );
       const user = db.prepare('SELECT id, username, name, email, avatar, storage_used, storage_limit, theme, language, last_login, created_at FROM users WHERE id = ?').get(result.lastInsertRowid);
       const token = generateToken(user);

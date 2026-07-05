@@ -16,12 +16,11 @@ async function handleLogin(e) {
   e.preventDefault();
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
-  const remember = document.getElementById('remember-me').checked;
   try {
     const btn = e.target.querySelector('button[type="submit"]');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px"></span>';
-    const result = await API.post('/auth/login', { email, password, remember });
+    const result = await API.post('/auth/login', { email, password });
     API.setToken(result.token);
     currentUser = result.user;
     showMainApp();
@@ -37,15 +36,13 @@ async function handleLogin(e) {
 
 async function handleRegister(e) {
   e.preventDefault();
-  const name = document.getElementById('register-name').value.trim();
-  const username = document.getElementById('register-username').value.trim();
   const email = document.getElementById('register-email').value.trim();
   const password = document.getElementById('register-password').value;
   try {
     const btn = e.target.querySelector('button[type="submit"]');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px"></span>';
-    const result = await API.post('/auth/register', { name, username: username || undefined, email, password });
+    const result = await API.post('/auth/register', { email, password });
     API.setToken(result.token);
     currentUser = result.user;
     showMainApp();
