@@ -67,8 +67,15 @@ function navigateTo(page, e) {
   selectedFiles.clear();
   updateSelectionUI();
 
+  // Update sidebar nav
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+  const sidebarItem = document.querySelector(`.sidebar .nav-item[data-page="${page}"]`);
+  if (sidebarItem) sidebarItem.classList.add('active');
+
+  // Update bottom nav
+  document.querySelectorAll('.nav-item-bottom').forEach(n => n.classList.remove('active'));
+  const bottomItem = document.querySelector(`.nav-item-bottom[data-page="${page}"]`);
+  if (bottomItem) bottomItem.classList.add('active');
 
   document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
   const pageEl = document.getElementById(`page-${page}`);

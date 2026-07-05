@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const sizes = [72,96,128,144,152,192,384,512];
+async function convertAll() {
+  for (const size of sizes) {
+    const response = await fetch('icons/icon-' + size + '.svg');
+    const svgText = await response.text();
+    const img = new Image();
+    const blob = new Blob([svgText], {type: 'image/svg+xml'});
+    const url = URL.createObjectURL(blob);
+    img.src = url;
+    await new Promise(r => img.onload = r);
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, size, size);
+    const link = document.createElement('a');
+    link.download = 'icon-' + size + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+  alert('Done! Check downloads folder.');
+}
+convertAll();
+</script>
+<p>Click to generate PNG icons</p>
+<button onclick="convertAll()">Generate Icons</button>
+</body>
+</html>

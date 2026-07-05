@@ -2,19 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#007AFF">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>CloudVault - Personal Cloud Storage</title>
+  <meta name="apple-mobile-web-app-title" content="CloudVault">
+  <meta name="description" content="Your personal cloud storage">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <title>CloudVault</title>
   <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/mobile.css">
   <link rel="stylesheet" href="styles/auth.css">
   <link rel="stylesheet" href="styles/sidebar.css">
-  <link rel="stylesheet" href="styles/dashboard.css">
   <link rel="stylesheet" href="styles/files.css">
   <link rel="stylesheet" href="styles/modals.css">
   <link rel="stylesheet" href="styles/players.css">
-  <link rel="stylesheet" href="styles/responsive.css">
 </head>
 <body>
   <div id="app">
@@ -693,6 +698,50 @@
     </div>
   </div>
 
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="nav-item-bottom active" data-page="dashboard" onclick="navigateTo('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-item-bottom" data-page="files" onclick="navigateTo('files')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      <span>Files</span>
+    </button>
+    <button class="nav-item-bottom" data-page="search" onclick="focusSearch()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span>Search</span>
+    </button>
+    <button class="nav-item-bottom" data-page="favorites" onclick="navigateTo('favorites')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span>Favorites</span>
+    </button>
+    <button class="nav-item-bottom" data-page="settings" onclick="navigateTo('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9c.26.46.81.77 1.51.77H21a2 2 0 010 4h-.09c-.7 0-1.25.31-1.51.77z"/></svg>
+      <span>Settings</span>
+    </button>
+  </nav>
+
+  <!-- Floating Action Button -->
+  <button class="fab" id="fab-upload" onclick="openUploadModal()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+  </button>
+
+  <!-- Install App Banner -->
+  <div id="install-banner" class="install-banner" style="display:none">
+    <div class="install-banner-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </div>
+    <div class="install-banner-info">
+      <h4>Install CloudVault</h4>
+      <p>Add to home screen for quick access</p>
+    </div>
+    <div class="install-banner-actions">
+      <button class="btn btn-secondary" onclick="dismissInstallBanner()">Later</button>
+      <button class="btn btn-primary" onclick="installApp()">Install</button>
+    </div>
+  </div>
+
   <!-- Toast Container -->
   <div id="toast-container" class="toast-container"></div>
 
@@ -704,5 +753,69 @@
   <script src="scripts/upload.js"></script>
   <script src="scripts/viewers.js"></script>
   <script src="scripts/ui.js"></script>
+  <script>
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('/sw.js');
+          console.log('SW registered:', reg.scope);
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'activated') {
+                showToast('App updated! Refresh for latest version.', 'info');
+              }
+            });
+          });
+        } catch (err) {
+          console.log('SW registration failed:', err);
+        }
+      });
+    }
+
+    // PWA Install Prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const banner = document.getElementById('install-banner');
+      if (banner && !localStorage.getItem('cloudvault_install_dismissed')) {
+        banner.style.display = 'flex';
+      }
+    });
+
+    function installApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choice) => {
+          if (choice.outcome === 'accepted') {
+            showToast('App installed!', 'success');
+          }
+          deferredPrompt = null;
+          document.getElementById('install-banner').style.display = 'none';
+        });
+      }
+    }
+
+    function dismissInstallBanner() {
+      document.getElementById('install-banner').style.display = 'none';
+      localStorage.setItem('cloudvault_install_dismissed', 'true');
+    }
+
+    window.addEventListener('appinstalled', () => {
+      document.getElementById('install-banner').style.display = 'none';
+      showToast('CloudVault installed successfully!', 'success');
+    });
+
+    // Focus search from bottom nav
+    function focusSearch() {
+      const input = document.getElementById('global-search');
+      if (input) {
+        input.focus();
+        input.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  </script>
 </body>
 </html>
