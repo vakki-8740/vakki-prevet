@@ -5,7 +5,7 @@
 // Example: https://your-backend.onrender.com
 // ============================================
 
-const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = 'https://vakki-prevet.onrender.com';
 
 // Backend API base URL
 const API_BASE_URL = BACKEND_URL + '/api';
