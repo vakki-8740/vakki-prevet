@@ -2,12 +2,10 @@ async function loadAllFiles() {
   const container = document.getElementById('files-container');
   const loading = document.getElementById('files-loading');
   const empty = document.getElementById('files-empty');
-  const count = document.getElementById('files-count');
 
   container.innerHTML = '';
   loading.style.display = 'flex';
   empty.style.display = 'none';
-  count.textContent = '';
 
   try {
     const result = await API.get('/files?limit=1000&sort=date&order=desc');
@@ -17,15 +15,12 @@ async function loadAllFiles() {
 
     if (result.files.length === 0) {
       empty.style.display = 'flex';
-      count.textContent = 'No files';
       return;
     }
 
-    count.textContent = `${result.files.length} file${result.files.length > 1 ? 's' : ''}`;
-
     result.files.forEach(file => {
       const el = document.createElement('div');
-      el.className = 'file-item';
+      el.className = 'file-card';
       el.dataset.id = file.id;
 
       const ext = file.extension || '';
@@ -40,17 +35,17 @@ async function loadAllFiles() {
       }
 
       el.innerHTML = `
-        <div class="file-item-preview">${preview}</div>
-        <div class="file-item-info">
-          <div class="file-item-name" title="${escapeHtml(file.original_name)}">${escapeHtml(file.original_name)}</div>
-          <div class="file-item-meta">${formatSize(file.file_size)}</div>
-        </div>
-        <div class="file-item-actions">
-          <button class="file-dl-btn" onclick="event.stopPropagation();downloadFile(${file.id})" title="Download">
+        <div class="file-card-preview">${preview}</div>
+        <div class="file-card-info">
+          <div class="file-card-name" title="${escapeHtml(file.original_name)}">${escapeHtml(file.original_name)}</div>
+          <div class="file-card-size">${formatSize(file.file_size)}</div>
+          <button class="dl-btn" onclick="event.stopPropagation();downloadFile(${file.id})" title="Download">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </button>
         </div>
       `;
+
+      el.addEventListener('click', () => openFile(file));
 
       el.addEventListener('dblclick', (e) => {
         e.preventDefault();
@@ -68,7 +63,6 @@ async function loadAllFiles() {
 function openFile(file) {
   const ext = (file.extension || '').toLowerCase();
   const category = getFileCategory(ext);
-
   switch (category) {
     case 'image': openImageViewer(file); break;
     case 'video': openVideoPlayer(file); break;
@@ -94,24 +88,12 @@ async function downloadFile(fileId) {
     }
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
+    a.href = url; a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast('Download started', 'success');
-  } catch (error) {
-    showToast(error.message, 'error');
-  }
-}
-
-async function deleteFile(fileId) {
-  if (!confirm('Delete this file?')) return;
-  try {
-    await API.delete(`/files/${fileId}`);
-    showToast('File deleted', 'success');
-    loadAllFiles();
   } catch (error) {
     showToast(error.message, 'error');
   }

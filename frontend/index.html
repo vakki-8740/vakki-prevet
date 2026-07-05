@@ -13,9 +13,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <title>CloudVault</title>
   <link rel="stylesheet" href="styles/main.css">
-  <link rel="stylesheet" href="styles/mobile.css">
   <link rel="stylesheet" href="styles/auth.css">
-  <link rel="stylesheet" href="styles/modals.css">
   <link rel="stylesheet" href="styles/players.css">
 </head>
 <body>
@@ -37,7 +35,6 @@
             <p>Your personal cloud storage</p>
           </div>
 
-          <!-- Login Form -->
           <form id="login-form" class="auth-form active">
             <div class="form-group">
               <label>Email</label>
@@ -55,7 +52,6 @@
             <p class="auth-switch">Don't have an account? <a href="#" onclick="showRegister(event)">Create one</a></p>
           </form>
 
-          <!-- Register Form -->
           <form id="register-form" class="auth-form">
             <div class="form-group">
               <label>Email</label>
@@ -78,98 +74,107 @@
 
     <!-- Main App -->
     <div id="main-app" class="page">
-      <div id="main-files">
-        <div id="files-header">
-          <div class="files-top">
-            <h1>My Files</h1>
-            <button class="btn btn-secondary" id="logout-btn" onclick="logout()">Sign Out</button>
-          </div>
-          <div id="files-count"></div>
+      <!-- Header -->
+      <header id="app-header">
+        <div class="header-left">
+          <img src="https://i.ibb.co/rTy9bHY/image.webp" alt="" width="28" height="28" style="border-radius:8px">
+          <span class="header-title">CloudVault</span>
         </div>
-        <div id="files-container" class="files-container grid-view"></div>
-        <div id="files-loading" class="loading-spinner" style="display:none"><div class="spinner"></div></div>
+        <button id="logout-btn" onclick="logout()" title="Sign Out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </header>
+
+      <!-- Files -->
+      <div id="main-files">
+        <div id="files-container" class="files-grid"></div>
+        <div id="files-loading" class="loading-wrap" style="display:none"><div class="spinner"></div></div>
         <div id="files-empty" class="empty-state" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          </div>
           <h3>No files yet</h3>
-          <p>Tap the upload button below to add files</p>
+          <p>Tap Upload to add your first file</p>
         </div>
       </div>
 
       <!-- Upload Button -->
-      <button id="upload-fab" onclick="openUploadModal()">
+      <button id="upload-btn" onclick="openUploadModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <span>Upload</span>
+        <span>Upload Files</span>
       </button>
     </div>
   </div>
 
-  <!-- Upload Progress Overlay -->
-  <div id="upload-overlay" class="upload-overlay" style="display:none">
+  <!-- Upload Sheet -->
+  <div id="upload-sheet-overlay" style="display:none" onclick="if(event.target===this)this.style.display='none'">
     <div class="upload-sheet">
       <div class="upload-sheet-header">
-        <h2>Uploading...</h2>
-        <span id="upload-progress-text">0%</span>
+        <h2>Uploading</h2>
+        <span class="upload-pct" id="upload-pct">0%</span>
       </div>
-      <div class="upload-sheet-bar">
-        <div class="upload-sheet-fill" id="upload-sheet-fill" style="width:0%"></div>
+      <div class="upload-track">
+        <div class="upload-track-fill" id="upload-track-fill" style="width:0%"></div>
       </div>
-      <div class="upload-sheet-list" id="upload-sheet-list"></div>
+      <div class="upload-sheet-body" id="upload-sheet-body"></div>
     </div>
   </div>
 
   <!-- Image Viewer -->
-  <div id="image-viewer" class="image-viewer" style="display:none">
+  <div id="image-viewer" class="viewer-overlay" style="display:none">
     <div class="viewer-header">
       <span id="viewer-filename"></span>
       <div class="viewer-actions">
         <button onclick="rotateImage(-90)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></button>
         <button onclick="rotateImage(90)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg></button>
-        <button onclick="zoomImage(-0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
-        <button onclick="zoomImage(0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
         <button onclick="closeImageViewer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
       </div>
     </div>
-    <div class="viewer-content"><img id="viewer-image" src="" alt=""></div>
+    <div class="viewer-body"><img id="viewer-image" src="" alt=""></div>
   </div>
 
   <!-- Video Player -->
-  <div id="video-player" class="media-player" style="display:none">
-    <div class="player-header">
+  <div id="video-player" class="viewer-overlay" style="display:none">
+    <div class="viewer-header">
       <span id="video-filename"></span>
       <button onclick="closeVideoPlayer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-    <div class="player-body"><video id="video-element" controls></video></div>
+    <div class="viewer-body"><video id="video-element" controls></video></div>
   </div>
 
   <!-- Audio Player -->
-  <div id="audio-player" class="media-player audio-player-modal" style="display:none">
-    <div class="player-header">
+  <div id="audio-player" class="viewer-overlay" style="display:none">
+    <div class="viewer-header">
       <span id="audio-filename"></span>
       <button onclick="closeAudioPlayer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-    <div class="player-body"><audio id="audio-element" controls></audio></div>
+    <div class="viewer-body audio-viewer-body">
+      <div class="audio-art">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      </div>
+      <audio id="audio-element" controls></audio>
+    </div>
   </div>
 
   <!-- Text Viewer -->
-  <div id="text-viewer" class="media-player" style="display:none">
-    <div class="player-header">
+  <div id="text-viewer" class="viewer-overlay" style="display:none">
+    <div class="viewer-header">
       <span id="text-filename"></span>
       <button onclick="closeTextViewer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-    <div class="player-body"><pre id="text-content"></pre></div>
+    <div class="viewer-body"><pre id="text-content"></pre></div>
   </div>
 
   <!-- PDF Viewer -->
-  <div id="pdf-viewer" class="media-player" style="display:none">
-    <div class="player-header">
+  <div id="pdf-viewer" class="viewer-overlay" style="display:none">
+    <div class="viewer-header">
       <span id="pdf-filename"></span>
       <button onclick="closePdfViewer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-    <div class="player-body"><iframe id="pdf-iframe" src="" frameborder="0"></iframe></div>
+    <div class="viewer-body"><iframe id="pdf-iframe" src="" frameborder="0"></iframe></div>
   </div>
 
-  <!-- Toast Container -->
-  <div id="toast-container" class="toast-container"></div>
+  <div id="toast-container"></div>
 
   <script src="config.js"></script>
   <script>setTimeout(()=>{const s=document.getElementById('splash-screen');if(s)s.remove()},2000);</script>

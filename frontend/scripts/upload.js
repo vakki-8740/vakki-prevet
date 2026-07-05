@@ -10,19 +10,18 @@ function openUploadModal() {
 }
 
 async function startUpload(files) {
-  const overlay = document.getElementById('upload-overlay');
-  const list = document.getElementById('upload-sheet-list');
-  const fill = document.getElementById('upload-sheet-fill');
-  const text = document.getElementById('upload-progress-text');
+  const overlay = document.getElementById('upload-sheet-overlay');
+  const body = document.getElementById('upload-sheet-body');
+  const track = document.getElementById('upload-track-fill');
+  const pct = document.getElementById('upload-pct');
 
-  list.innerHTML = '';
-  fill.style.width = '0%';
-  text.textContent = '0%';
+  body.innerHTML = '';
+  track.style.width = '0%';
+  pct.textContent = '0%';
   overlay.style.display = 'flex';
 
   let total = files.length;
-  let completed = 0;
-  let failed = 0;
+  let done = 0;
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
@@ -30,66 +29,53 @@ async function startUpload(files) {
     const color = getFileIconColor(ext);
 
     const item = document.createElement('div');
-    item.className = 'upload-sheet-item';
-    item.id = `ul-${Date.now()}-${i}`;
+    item.className = 'upload-item';
     item.innerHTML = `
       <div class="upload-item-icon" style="background:linear-gradient(135deg,${color},${color}dd)">${getFileTypeIcon(ext)}</div>
       <div class="upload-item-info">
         <div class="upload-item-name">${escapeHtml(file.name)}</div>
         <div class="upload-item-size">${formatSize(file.size)}</div>
-        <div class="upload-item-progress"><div class="upload-item-progress-fill" style="width:0%"></div></div>
+        <div class="upload-item-bar"><div class="upload-item-fill" style="width:0%"></div></div>
       </div>
-      <div class="upload-item-status pending">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-      </div>
+      <div class="upload-item-status"><div class="spinner-sm"></div></div>
     `;
-    list.appendChild(item);
+    body.appendChild(item);
 
     try {
-      const pFill = item.querySelector('.upload-item-progress-fill');
+      const fill = item.querySelector('.upload-item-fill');
       const status = item.querySelector('.upload-item-status');
-
-      status.className = 'upload-item-status uploading';
-      status.innerHTML = '<div class="spinner-sm"></div>';
 
       const formData = new FormData();
       formData.append('files', file);
 
-      await API.upload('/files/upload', formData, (pct) => {
-        if (pFill) pFill.style.width = `${pct}%`;
-        const overall = Math.round(((completed + (pct / 100)) / total) * 100);
-        fill.style.width = `${overall}%`;
-        text.textContent = `${overall}%`;
+      await API.upload('/files/upload', formData, (p) => {
+        if (fill) fill.style.width = `${p}%`;
+        const overall = Math.round(((done + (p / 100)) / total) * 100);
+        track.style.width = `${overall}%`;
+        pct.textContent = `${overall}%`;
       });
 
-      pFill.style.width = '100%';
-      pFill.style.background = '#34C759';
+      fill.style.width = '100%';
+      fill.style.background = '#34C759';
       status.className = 'upload-item-status done';
       status.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
-      completed++;
-
+      done++;
     } catch (err) {
-      const pFill = item.querySelector('.upload-item-progress-fill');
-      if (pFill) { pFill.style.width = '100%'; pFill.style.background = '#FF3B30'; }
+      const fill = item.querySelector('.upload-item-fill');
+      if (fill) { fill.style.width = '100%'; fill.style.background = '#FF3B30'; }
       const status = item.querySelector('.upload-item-status');
       status.className = 'upload-item-status error';
       status.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#FF3B30" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-      failed++;
     }
 
-    const pct = Math.round(((completed + failed) / total) * 100);
-    fill.style.width = `${pct}%`;
-    text.textContent = `${pct}%`;
+    const p = Math.round((() => { let c = 0; body.querySelectorAll('.upload-item').forEach(el => { if (el.querySelector('.done, .error')) c++; }); return c; })() / total * 100);
+    track.style.width = `${p}%`;
+    pct.textContent = `${p}%`;
   }
 
-  if (completed > 0) {
-    showToast(`${completed} file(s) uploaded successfully`, 'success');
-    setTimeout(() => {
-      overlay.style.display = 'none';
-      loadAllFiles();
-    }, 1200);
-  } else {
-    showToast('Upload failed', 'error');
-    setTimeout(() => overlay.style.display = 'none', 1500);
-  }
+  showToast(`${done} file(s) uploaded`, 'success');
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    loadAllFiles();
+  }, 1000);
 }
