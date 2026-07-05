@@ -28,14 +28,26 @@ async function loadAllFiles() {
       const color = getFileIconColor(ext);
 
       let preview = '';
+
       if (category === 'image') {
         preview = `<img src="${API.baseURL}/files/${file.id}/preview" alt="${escapeHtml(file.original_name)}" loading="lazy">`;
+      } else if (category === 'video') {
+        preview = `
+          <div class="file-icon" style="background:linear-gradient(135deg,${color},${color}dd)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="32" height="32"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+          <div class="play-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>`;
       } else {
         preview = `<div class="file-icon" style="background:linear-gradient(135deg,${color},${color}dd)">${getFileTypeIcon(ext)}</div>`;
       }
 
+      const typeLabel = category === 'image' ? 'img' : category === 'video' ? 'vid' : category === 'audio' ? 'aud' : category === 'pdf' ? 'pdf' : '';
+
       el.innerHTML = `
         <div class="file-card-preview">${preview}</div>
+        ${typeLabel ? `<span class="file-type-badge">${typeLabel}</span>` : ''}
         <div class="file-card-info">
           <div class="file-card-name" title="${escapeHtml(file.original_name)}">${escapeHtml(file.original_name)}</div>
           <div class="file-card-size">${formatSize(file.file_size)}</div>
