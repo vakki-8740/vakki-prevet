@@ -8,7 +8,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="CloudVault">
   <meta name="description" content="Your personal cloud storage">
-  <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -16,8 +15,6 @@
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/mobile.css">
   <link rel="stylesheet" href="styles/auth.css">
-  <link rel="stylesheet" href="styles/sidebar.css">
-  <link rel="stylesheet" href="styles/files.css">
   <link rel="stylesheet" href="styles/modals.css">
   <link rel="stylesheet" href="styles/players.css">
 </head>
@@ -30,7 +27,7 @@
   </div>
 
   <div id="app">
-    <!-- Auth Pages -->
+    <!-- Auth Page -->
     <div id="auth-page" class="page active">
       <div class="auth-container">
         <div class="auth-card glass-card">
@@ -45,24 +42,16 @@
             <div class="form-group">
               <label>Email</label>
               <div class="input-wrapper">
-                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 4-10 8L2 4"/></svg>
                 <input type="email" id="login-email" placeholder="Enter your email" required autocomplete="email">
               </div>
             </div>
             <div class="form-group">
               <label>Password</label>
               <div class="input-wrapper">
-                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
                 <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password">
-                <button type="button" class="toggle-password" onclick="togglePasswordVisibility('login-password')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </button>
               </div>
             </div>
-            <div style="height:4px"></div>
-            <button type="submit" class="btn btn-primary btn-full">
-              <span>Sign In</span>
-            </button>
+            <button type="submit" class="btn btn-primary btn-full"><span>Sign In</span></button>
             <p class="auth-switch">Don't have an account? <a href="#" onclick="showRegister(event)">Create one</a></p>
           </form>
 
@@ -71,23 +60,16 @@
             <div class="form-group">
               <label>Email</label>
               <div class="input-wrapper">
-                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 4-10 8L2 4"/></svg>
                 <input type="email" id="register-email" placeholder="Enter your email" required autocomplete="email">
               </div>
             </div>
             <div class="form-group">
               <label>Password</label>
               <div class="input-wrapper">
-                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
                 <input type="password" id="register-password" placeholder="Create a password" required minlength="6">
-                <button type="button" class="toggle-password" onclick="togglePasswordVisibility('register-password')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </button>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-full">
-              <span>Create Account</span>
-            </button>
+            <button type="submit" class="btn btn-primary btn-full"><span>Create Account</span></button>
             <p class="auth-switch">Already have an account? <a href="#" onclick="showLogin(event)">Sign in</a></p>
           </form>
         </div>
@@ -96,629 +78,101 @@
 
     <!-- Main App -->
     <div id="main-app" class="page">
-      <!-- Sidebar -->
-      <aside id="sidebar" class="sidebar glass-sidebar">
-        <div class="sidebar-header">
-          <div class="logo">
-            <img src="https://i.ibb.co/rTy9bHY/image.webp" alt="Logo" width="28" height="28" style="border-radius:8px">
-            <span>CloudVault</span>
+      <div id="main-files">
+        <div id="files-header">
+          <div class="files-top">
+            <h1>My Files</h1>
+            <button class="btn btn-secondary" id="logout-btn" onclick="logout()">Sign Out</button>
           </div>
-          <button id="sidebar-close" class="sidebar-close-btn" onclick="toggleSidebar()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
+          <div id="files-count"></div>
         </div>
-
-        <nav class="sidebar-nav">
-          <a href="#" class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard', event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-            <span>Dashboard</span>
-          </a>
-          <a href="#" class="nav-item" data-page="files" onclick="navigateTo('files', event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-            <span>All Files</span>
-          </a>
-          <a href="#" class="nav-item" data-page="recent" onclick="navigateTo('recent', event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span>Recent</span>
-          </a>
-          <a href="#" class="nav-item" data-page="favorites" onclick="navigateTo('favorites', event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <span>Favorites</span>
-          </a>
-          <a href="#" class="nav-item" data-page="trash" onclick="navigateTo('trash', event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-            <span>Trash</span>
-          </a>
-
-          <div class="nav-divider"></div>
-          <div class="nav-label">Filters</div>
-
-          <a href="#" class="nav-item" data-page="images" onclick="navigateTo('images', event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-            <span>Images</span>
-          </a>
-          <a href="#" class="nav-item" data-page="videos" onclick="navigateTo('videos', event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-            <span>Videos</span>
-          </a>
-          <a href="#" class="nav-item" data-page="audio" onclick="navigateTo('audio', event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-            <span>Audio</span>
-          </a>
-          <a href="#" class="nav-item" data-page="documents" onclick="navigateTo('documents', event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            <span>Documents</span>
-          </a>
-
-          <div class="nav-divider"></div>
-
-          <a href="#" class="nav-item" data-page="settings" onclick="navigateTo('settings', event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-            <span>Settings</span>
-          </a>
-        </nav>
-
-        <div class="sidebar-footer">
-          <div class="storage-info">
-            <div class="storage-text">
-              <span>Storage</span>
-              <span id="sidebar-storage-text">0 / 0</span>
-            </div>
-            <div class="storage-bar">
-              <div class="storage-fill" id="sidebar-storage-fill" style="width: 0%"></div>
-            </div>
-          </div>
-          <div class="user-info" onclick="navigateTo('settings')">
-            <div class="user-avatar" id="sidebar-avatar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </div>
-            <div class="user-details">
-              <span id="sidebar-user-name">User</span>
-              <span id="sidebar-user-email">user@email.com</span>
-            </div>
-          </div>
+        <div id="files-container" class="files-container grid-view"></div>
+        <div id="files-loading" class="loading-spinner" style="display:none"><div class="spinner"></div></div>
+        <div id="files-empty" class="empty-state" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          <h3>No files yet</h3>
+          <p>Tap the upload button below to add files</p>
         </div>
-      </aside>
+      </div>
 
-      <!-- Main Content -->
-      <main id="main-content" class="main-content">
-        <!-- Top Bar -->
-        <header class="topbar glass-topbar">
-          <button class="menu-btn" onclick="toggleSidebar()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-          </button>
-          <div class="search-bar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="global-search" placeholder="Search files and folders..." oninput="handleGlobalSearch(this.value)">
-            <kbd class="search-shortcut">Ctrl+K</kbd>
-          </div>
-          <div class="topbar-actions">
-            <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
-              <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-              <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-            </button>
-            <button class="icon-btn" id="notification-btn" onclick="toggleNotifications()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-            </button>
-            <button class="btn btn-primary" id="upload-btn" onclick="openUploadModal()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span>Upload</span>
-            </button>
-          </div>
-        </header>
-
-        <!-- Page Content -->
-        <div class="page-content" id="page-content">
-          <!-- Dashboard Page -->
-          <div id="page-dashboard" class="page-view active">
-            <div class="page-header">
-              <h1>Dashboard</h1>
-              <p>Welcome back, <span id="dash-user-name">User</span></p>
-            </div>
-            <div class="dashboard-grid">
-              <div class="stat-card glass-card" id="stat-storage">
-                <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
-                <div class="stat-info"><span class="stat-value" id="stat-files">0</span><span class="stat-label">Total Files</span></div>
-              </div>
-              <div class="stat-card glass-card" id="stat-folders">
-                <div class="stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
-                <div class="stat-info"><span class="stat-value" id="stat-folders">0</span><span class="stat-label">Folders</span></div>
-              </div>
-              <div class="stat-card glass-card" id="stat-images">
-                <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
-                <div class="stat-info"><span class="stat-value" id="stat-images">0</span><span class="stat-label">Images</span></div>
-              </div>
-              <div class="stat-card glass-card" id="stat-videos">
-                <div class="stat-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
-                <div class="stat-info"><span class="stat-value" id="stat-videos">0</span><span class="stat-label">Videos</span></div>
-              </div>
-            </div>
-
-            <div class="dashboard-row">
-              <div class="storage-overview glass-card">
-                <h3>Storage Overview</h3>
-                <div class="storage-circle-container">
-                  <div class="storage-circle">
-                    <svg viewBox="0 0 120 120">
-                      <circle cx="60" cy="60" r="54" fill="none" stroke="var(--border)" stroke-width="8"/>
-                      <circle cx="60" cy="60" r="54" fill="none" stroke="url(#storage-gradient)" stroke-width="8" stroke-dasharray="339.292" stroke-dashoffset="339.292" stroke-linecap="round" transform="rotate(-90 60 60)" id="storage-circle-fill"/>
-                      <defs><linearGradient id="storage-gradient"><stop stop-color="#007AFF"/><stop offset="1" stop-color="#5856D6"/></linearGradient></defs>
-                    </svg>
-                    <div class="storage-center-text">
-                      <span id="storage-percentage">0%</span>
-                      <span>Used</span>
-                    </div>
-                  </div>
-                  <div class="storage-details">
-                    <span id="storage-used">0 B</span> of <span id="storage-limit">0 B</span>
-                    <div class="storage-chart" id="storage-chart"></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="recent-files glass-card">
-                <h3>Recent Files</h3>
-                <div id="recent-files-list" class="recent-list"></div>
-              </div>
-            </div>
-
-            <div class="activity-section glass-card">
-              <h3>Recent Activity</h3>
-              <div id="activity-list" class="activity-list"></div>
-            </div>
-          </div>
-
-          <!-- Files Page -->
-          <div id="page-files" class="page-view">
-            <div class="page-header">
-              <div class="breadcrumb" id="breadcrumb">
-                <a href="#" onclick="navigateFolder(null, event)">My Files</a>
-              </div>
-              <div class="page-actions">
-                <div class="view-toggle">
-                  <button class="view-btn active" data-view="grid" onclick="setView('grid')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                  </button>
-                  <button class="view-btn" data-view="list" onclick="setView('list')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                  </button>
-                </div>
-                <div class="sort-dropdown">
-                  <button class="btn btn-secondary" onclick="toggleSortDropdown()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="16" y2="6"/><line x1="4" y1="12" x2="12" y2="12"/><line x1="4" y1="18" x2="8" y2="18"/><polyline points="15 15 18 18 15 21"/><line x1="18" y1="9" x2="18" y2="18"/></svg>
-                    <span>Sort</span>
-                  </button>
-                  <div class="dropdown-menu" id="sort-dropdown">
-                    <button onclick="sortFiles('name', 'asc')">Name A-Z</button>
-                    <button onclick="sortFiles('name', 'desc')">Name Z-A</button>
-                    <button onclick="sortFiles('date', 'desc')">Newest First</button>
-                    <button onclick="sortFiles('date', 'asc')">Oldest First</button>
-                    <button onclick="sortFiles('size', 'desc')">Largest First</button>
-                    <button onclick="sortFiles('size', 'asc')">Smallest First</button>
-                    <button onclick="sortFiles('type', 'asc')">Type</button>
-                  </div>
-                </div>
-                <button class="btn btn-secondary" onclick="openCreateFolderModal()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
-                  <span>New Folder</span>
-                </button>
-                <div class="selection-actions" id="selection-actions" style="display:none">
-                  <span id="selection-count">0 selected</span>
-                  <button class="btn btn-secondary" onclick="downloadSelected()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Download
-                  </button>
-                  <button class="btn btn-danger" onclick="deleteSelected()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="upload-zone" id="upload-zone">
-              <div class="upload-zone-content">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                <p>Drag & drop files here, or <button onclick="document.getElementById('file-input').click()">browse</button></p>
-                <span>Maximum file size: 500MB</span>
-              </div>
-              <input type="file" id="file-input" multiple style="display:none" onchange="handleFileSelect(event)">
-            </div>
-
-            <div id="files-container" class="files-container grid-view"></div>
-            <div id="files-loading" class="loading-spinner" style="display:none">
-              <div class="spinner"></div>
-            </div>
-            <div id="files-empty" class="empty-state" style="display:none">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-              <h3>No files yet</h3>
-              <p>Upload files or create a folder to get started</p>
-            </div>
-            <div id="pagination" class="pagination"></div>
-          </div>
-
-          <!-- Favorites Page -->
-          <div id="page-favorites" class="page-view">
-            <div class="page-header"><h1>Favorites</h1></div>
-            <div id="favorites-container" class="files-container grid-view"></div>
-            <div id="favorites-empty" class="empty-state" style="display:none">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              <h3>No favorites yet</h3>
-              <p>Star files to add them to your favorites</p>
-            </div>
-          </div>
-
-          <!-- Trash Page -->
-          <div id="page-trash" class="page-view">
-            <div class="page-header">
-              <h1>Trash</h1>
-              <button class="btn btn-danger" onclick="emptyTrash()" id="empty-trash-btn" style="display:none">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-                Empty Trash
-              </button>
-            </div>
-            <div id="trash-container" class="files-container grid-view"></div>
-            <div id="trash-empty" class="empty-state" style="display:none">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-              <h3>Trash is empty</h3>
-              <p>Deleted files will appear here</p>
-            </div>
-          </div>
-
-          <!-- Recent Page -->
-          <div id="page-recent" class="page-view">
-            <div class="page-header"><h1>Recent Files</h1></div>
-            <div id="recent-container" class="files-container grid-view"></div>
-            <div id="recent-empty" class="empty-state" style="display:none">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              <h3>No recent files</h3>
-              <p>Files you upload will appear here</p>
-            </div>
-          </div>
-
-          <!-- Type Filter Pages -->
-          <div id="page-images" class="page-view"><div class="page-header"><h1>Images</h1></div><div id="images-container" class="files-container grid-view"></div><div id="images-empty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><h3>No images</h3></div></div>
-          <div id="page-videos" class="page-view"><div class="page-header"><h1>Videos</h1></div><div id="videos-container" class="files-container grid-view"></div><div id="videos-empty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><h3>No videos</h3></div></div>
-          <div id="page-audio" class="page-view"><div class="page-header"><h1>Audio</h1></div><div id="audio-container" class="files-container grid-view"></div><div id="audio-empty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><h3>No audio files</h3></div></div>
-          <div id="page-documents" class="page-view"><div class="page-header"><h1>Documents</h1></div><div id="documents-container" class="files-container grid-view"></div><div id="documents-empty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><h3>No documents</h3></div></div>
-
-          <!-- Settings Page -->
-          <div id="page-settings" class="page-view">
-            <div class="page-header"><h1>Settings</h1></div>
-            <div class="settings-container">
-              <div class="settings-section glass-card">
-                <h3>Profile</h3>
-                <div class="profile-form">
-                  <div class="avatar-section">
-                    <div class="avatar-large" id="settings-avatar">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <button class="btn btn-secondary" onclick="document.getElementById('avatar-input').click()">Change Avatar</button>
-                    <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(event)">
-                  </div>
-                  <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="settings-name" placeholder="Your name">
-                  </div>
-                  <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="settings-username" placeholder="Your username" pattern="[a-zA-Z0-9_]{3,30}">
-                  </div>
-                  <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="settings-email" placeholder="Your email">
-                  </div>
-                  <button class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
-                </div>
-              </div>
-
-              <div class="settings-section glass-card">
-                <h3>Security</h3>
-                <div class="form-group">
-                  <label>Current Password</label>
-                  <input type="password" id="current-password" placeholder="Enter current password">
-                </div>
-                <div class="form-group">
-                  <label>New Password</label>
-                  <input type="password" id="new-password" placeholder="Enter new password">
-                </div>
-                <button class="btn btn-primary" onclick="changePassword()">Change Password</button>
-              </div>
-
-              <div class="settings-section glass-card">
-                <h3>Appearance</h3>
-                <div class="theme-options">
-                  <button class="theme-option" data-theme="light" onclick="setTheme('light')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                    <span>Light</span>
-                  </button>
-                  <button class="theme-option" data-theme="dark" onclick="setTheme('dark')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-                    <span>Dark</span>
-                  </button>
-                  <button class="theme-option active" data-theme="auto" onclick="setTheme('auto')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                    <span>Auto</span>
-                  </button>
-                </div>
-              </div>
-
-              <div class="settings-section glass-card">
-                <h3>Storage</h3>
-                <div class="storage-info-settings">
-                  <div class="storage-bar-large">
-                    <div class="storage-fill" id="settings-storage-fill" style="width: 0%"></div>
-                  </div>
-                  <p id="settings-storage-text">0 B used of 0 B</p>
-                </div>
-              </div>
-
-              <div class="settings-section glass-card">
-                <h3>Account</h3>
-                <p class="settings-info">Joined: <span id="settings-joined">-</span></p>
-                <button class="btn btn-danger" onclick="logout()">Sign Out</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  </div>
-
-  <!-- Modals -->
-  <div id="modal-overlay" class="modal-overlay" onclick="closeModal()"></div>
-
-  <!-- Upload Modal -->
-  <div id="upload-modal" class="modal glass-modal">
-    <div class="modal-header">
-      <h2>Upload Files</h2>
-      <button class="modal-close" onclick="closeModal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      <!-- Upload Button -->
+      <button id="upload-fab" onclick="openUploadModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>Upload</span>
       </button>
     </div>
-    <div class="modal-body">
-      <div class="upload-drop-zone" id="modal-upload-zone">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <p>Drag & drop files here</p>
-        <span>or</span>
-        <button class="btn btn-primary" onclick="document.getElementById('modal-file-input').click()">Browse Files</button>
-        <input type="file" id="modal-file-input" multiple style="display:none" onchange="handleModalFileSelect(event)">
+  </div>
+
+  <!-- Upload Progress Overlay -->
+  <div id="upload-overlay" class="upload-overlay" style="display:none">
+    <div class="upload-sheet">
+      <div class="upload-sheet-header">
+        <h2>Uploading...</h2>
+        <span id="upload-progress-text">0%</span>
       </div>
-      <div id="upload-list" class="upload-list"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" id="upload-start-btn" onclick="startUpload()" style="display:none">Upload</button>
-    </div>
-  </div>
-
-  <!-- Create Folder Modal -->
-  <div id="folder-modal" class="modal glass-modal">
-    <div class="modal-header">
-      <h2>Create Folder</h2>
-      <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Folder Name</label>
-        <input type="text" id="folder-name-input" placeholder="Enter folder name" autofocus>
+      <div class="upload-sheet-bar">
+        <div class="upload-sheet-fill" id="upload-sheet-fill" style="width:0%"></div>
       </div>
-      <div class="form-group">
-        <label>Color</label>
-        <div class="color-picker">
-          <button class="color-option active" data-color="#007AFF" style="background:#007AFF" onclick="selectFolderColor(this)"></button>
-          <button class="color-option" data-color="#34C759" style="background:#34C759" onclick="selectFolderColor(this)"></button>
-          <button class="color-option" data-color="#FF9500" style="background:#FF9500" onclick="selectFolderColor(this)"></button>
-          <button class="color-option" data-color="#FF3B30" style="background:#FF3B30" onclick="selectFolderColor(this)"></button>
-          <button class="color-option" data-color="#AF52DE" style="background:#AF52DE" onclick="selectFolderColor(this)"></button>
-          <button class="color-option" data-color="#FF2D55" style="background:#FF2D55" onclick="selectFolderColor(this)"></button>
-          <button class="color-option" data-color="#5856D6" style="background:#5856D6" onclick="selectFolderColor(this)"></button>
-          <button class="color-option" data-color="#00C7BE" style="background:#00C7BE" onclick="selectFolderColor(this)"></button>
-        </div>
-      </div>
+      <div class="upload-sheet-list" id="upload-sheet-list"></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="createFolder()">Create</button>
-    </div>
-  </div>
-
-  <!-- Rename Modal -->
-  <div id="rename-modal" class="modal glass-modal">
-    <div class="modal-header">
-      <h2>Rename</h2>
-      <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>New Name</label>
-        <input type="text" id="rename-input" placeholder="Enter new name">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmRename()">Rename</button>
-    </div>
-  </div>
-
-  <!-- Delete Confirm Modal -->
-  <div id="delete-modal" class="modal glass-modal">
-    <div class="modal-header">
-      <h2>Delete</h2>
-      <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <p id="delete-message">Are you sure you want to delete this item?</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-danger" id="delete-confirm-btn" onclick="confirmDelete()">Delete</button>
-    </div>
-  </div>
-
-  <!-- Properties Modal -->
-  <div id="properties-modal" class="modal glass-modal">
-    <div class="modal-header">
-      <h2>Properties</h2>
-      <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    </div>
-    <div class="modal-body" id="properties-content"></div>
-  </div>
-
-  <!-- Context Menu -->
-  <div id="context-menu" class="context-menu glass-card">
-    <button onclick="contextAction('open')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open</button>
-    <button onclick="contextAction('preview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Preview</button>
-    <button onclick="contextAction('download')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
-    <div class="context-divider"></div>
-    <button onclick="contextAction('rename')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Rename</button>
-    <button onclick="contextAction('favorite')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Favorite</button>
-    <button onclick="contextAction('duplicate')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Duplicate</button>
-    <button onclick="contextAction('properties')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Properties</button>
-    <div class="context-divider"></div>
-    <button class="danger" onclick="contextAction('delete')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Delete</button>
   </div>
 
   <!-- Image Viewer -->
   <div id="image-viewer" class="image-viewer" style="display:none">
     <div class="viewer-header">
-      <span id="viewer-filename">image.jpg</span>
+      <span id="viewer-filename"></span>
       <div class="viewer-actions">
         <button onclick="rotateImage(-90)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></button>
         <button onclick="rotateImage(90)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg></button>
-        <button onclick="zoomImage(0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
         <button onclick="zoomImage(-0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+        <button onclick="zoomImage(0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
         <button onclick="closeImageViewer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
       </div>
     </div>
-    <div class="viewer-content">
-      <img id="viewer-image" src="" alt="">
-    </div>
+    <div class="viewer-content"><img id="viewer-image" src="" alt=""></div>
   </div>
 
-  <!-- Video Player Modal -->
+  <!-- Video Player -->
   <div id="video-player" class="media-player" style="display:none">
     <div class="player-header">
-      <span id="video-filename">video.mp4</span>
+      <span id="video-filename"></span>
       <button onclick="closeVideoPlayer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-    <div class="player-body">
-      <video id="video-element" controls></video>
-    </div>
+    <div class="player-body"><video id="video-element" controls></video></div>
   </div>
 
-  <!-- Audio Player Modal -->
+  <!-- Audio Player -->
   <div id="audio-player" class="media-player audio-player-modal" style="display:none">
     <div class="player-header">
-      <span id="audio-filename">audio.mp3</span>
+      <span id="audio-filename"></span>
       <button onclick="closeAudioPlayer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-    <div class="player-body">
-      <div class="audio-visual">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      </div>
-      <audio id="audio-element" controls></audio>
-    </div>
+    <div class="player-body"><audio id="audio-element" controls></audio></div>
   </div>
 
-  <!-- Text/Code Viewer -->
+  <!-- Text Viewer -->
   <div id="text-viewer" class="media-player" style="display:none">
     <div class="player-header">
-      <span id="text-filename">file.txt</span>
+      <span id="text-filename"></span>
       <button onclick="closeTextViewer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-    <div class="player-body">
-      <pre id="text-content"></pre>
-    </div>
+    <div class="player-body"><pre id="text-content"></pre></div>
   </div>
 
   <!-- PDF Viewer -->
   <div id="pdf-viewer" class="media-player" style="display:none">
     <div class="player-header">
-      <span id="pdf-filename">document.pdf</span>
+      <span id="pdf-filename"></span>
       <button onclick="closePdfViewer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-    <div class="player-body">
-      <iframe id="pdf-iframe" src="" frameborder="0"></iframe>
-    </div>
-  </div>
-
-  <!-- Forgot Password Modal -->
-  <div id="forgot-modal" class="modal glass-modal">
-    <div class="modal-header">
-      <h2>Reset Password</h2>
-      <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">Enter your email address and we'll send you a link to reset your password.</p>
-      <div class="form-group">
-        <label>Email</label>
-        <div class="input-wrapper">
-          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 4-10 8L2 4"/></svg>
-          <input type="email" id="forgot-email" placeholder="Enter your email" required>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="sendForgotPassword()">Send Reset Link</button>
-    </div>
-  </div>
-
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav" id="bottom-nav">
-    <button class="nav-item-bottom active" data-page="dashboard" onclick="navigateTo('dashboard')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span>Home</span>
-    </button>
-    <button class="nav-item-bottom" data-page="files" onclick="navigateTo('files')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-      <span>Files</span>
-    </button>
-    <button class="nav-item-bottom" data-page="search" onclick="focusSearch()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <span>Search</span>
-    </button>
-    <button class="nav-item-bottom" data-page="favorites" onclick="navigateTo('favorites')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      <span>Favorites</span>
-    </button>
-    <button class="nav-item-bottom" data-page="settings" onclick="navigateTo('settings')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9c.26.46.81.77 1.51.77H21a2 2 0 010 4h-.09c-.7 0-1.25.31-1.51.77z"/></svg>
-      <span>Settings</span>
-    </button>
-  </nav>
-
-  <!-- Floating Action Button -->
-  <button class="fab" id="fab-upload" onclick="openUploadModal()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-  </button>
-
-  <!-- Install App Banner -->
-  <div id="install-banner" class="install-banner" style="display:none">
-    <div class="install-banner-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    </div>
-    <div class="install-banner-info">
-      <h4>Install CloudVault</h4>
-      <p>Add to home screen for quick access</p>
-    </div>
-    <div class="install-banner-actions">
-      <button class="btn btn-secondary" onclick="dismissInstallBanner()">Later</button>
-      <button class="btn btn-primary" onclick="installApp()">Install</button>
-    </div>
+    <div class="player-body"><iframe id="pdf-iframe" src="" frameborder="0"></iframe></div>
   </div>
 
   <!-- Toast Container -->
   <div id="toast-container" class="toast-container"></div>
 
   <script src="config.js"></script>
-  <script>
-    setTimeout(() => {
-      const splash = document.getElementById('splash-screen');
-      if (splash) splash.remove();
-    }, 2000);
-  </script>
+  <script>setTimeout(()=>{const s=document.getElementById('splash-screen');if(s)s.remove()},2000);</script>
   <script src="scripts/api.js"></script>
   <script src="scripts/auth.js"></script>
   <script src="scripts/app.js"></script>
@@ -726,69 +180,5 @@
   <script src="scripts/upload.js"></script>
   <script src="scripts/viewers.js"></script>
   <script src="scripts/ui.js"></script>
-  <script>
-    // Service Worker Registration
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', async () => {
-        try {
-          const reg = await navigator.serviceWorker.register('/sw.js');
-          console.log('SW registered:', reg.scope);
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'activated') {
-                showToast('App updated! Refresh for latest version.', 'info');
-              }
-            });
-          });
-        } catch (err) {
-          console.log('SW registration failed:', err);
-        }
-      });
-    }
-
-    // PWA Install Prompt
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const banner = document.getElementById('install-banner');
-      if (banner && !localStorage.getItem('cloudvault_install_dismissed')) {
-        banner.style.display = 'flex';
-      }
-    });
-
-    function installApp() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choice) => {
-          if (choice.outcome === 'accepted') {
-            showToast('App installed!', 'success');
-          }
-          deferredPrompt = null;
-          document.getElementById('install-banner').style.display = 'none';
-        });
-      }
-    }
-
-    function dismissInstallBanner() {
-      document.getElementById('install-banner').style.display = 'none';
-      localStorage.setItem('cloudvault_install_dismissed', 'true');
-    }
-
-    window.addEventListener('appinstalled', () => {
-      document.getElementById('install-banner').style.display = 'none';
-      showToast('CloudVault installed successfully!', 'success');
-    });
-
-    // Focus search from bottom nav
-    function focusSearch() {
-      const input = document.getElementById('global-search');
-      if (input) {
-        input.focus();
-        input.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  </script>
 </body>
 </html>

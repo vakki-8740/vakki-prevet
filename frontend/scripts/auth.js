@@ -83,8 +83,7 @@ function showAuthPage() {
 function showMainApp() {
   document.getElementById('auth-page').classList.remove('active');
   document.getElementById('main-app').classList.add('active');
-  updateUserUI();
-  loadDashboard();
+  loadAllFiles();
 }
 
 function showLogin(e) {
@@ -97,30 +96,4 @@ function showRegister(e) {
   if (e) e.preventDefault();
   document.getElementById('login-form').classList.remove('active');
   document.getElementById('register-form').classList.add('active');
-}
-
-function togglePasswordVisibility(id) {
-  const input = document.getElementById(id);
-  input.type = input.type === 'password' ? 'text' : 'password';
-}
-
-function showForgotPassword(e) {
-  if (e) e.preventDefault();
-  document.getElementById('forgot-email').value = '';
-  openModal('forgot-modal');
-}
-
-async function sendForgotPassword() {
-  const email = document.getElementById('forgot-email').value.trim();
-  if (!email) {
-    showToast('Please enter your email', 'warning');
-    return;
-  }
-  try {
-    const result = await API.post('/auth/forgot-password', { email });
-    closeModal();
-    showToast(result.message, 'success');
-  } catch (error) {
-    showToast(error.message, 'error');
-  }
 }

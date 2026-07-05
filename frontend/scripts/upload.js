@@ -1,148 +1,95 @@
-let pendingUploads = [];
-let isUploading = false;
-
 function openUploadModal() {
-  pendingUploads = [];
-  document.getElementById('upload-list').innerHTML = '';
-  document.getElementById('upload-start-btn').style.display = 'none';
-  openModal('upload-modal');
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.multiple = true;
+  input.onchange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) startUpload(files);
+  };
+  input.click();
 }
 
-function handleFileSelect(event) {
-  const files = Array.from(event.target.files);
-  addFilesToUploadList(files);
-  event.target.value = '';
-}
+async function startUpload(files) {
+  const overlay = document.getElementById('upload-overlay');
+  const list = document.getElementById('upload-sheet-list');
+  const fill = document.getElementById('upload-sheet-fill');
+  const text = document.getElementById('upload-progress-text');
 
-function handleModalFileSelect(event) {
-  const files = Array.from(event.target.files);
-  addFilesToUploadList(files);
-  event.target.value = '';
-}
+  list.innerHTML = '';
+  fill.style.width = '0%';
+  text.textContent = '0%';
+  overlay.style.display = 'flex';
 
-function handleDrop(event) {
-  event.preventDefault();
-  event.currentTarget.classList.remove('drag-over');
-  const files = Array.from(event.dataTransfer.files);
-  if (files.length > 0) {
-    addFilesToUploadList(files);
-    openUploadModal();
-  }
-}
+  let total = files.length;
+  let completed = 0;
+  let failed = 0;
 
-function handleModalDrop(event) {
-  event.preventDefault();
-  event.currentTarget.classList.remove('drag-over');
-  const files = Array.from(event.dataTransfer.files);
-  addFilesToUploadList(files);
-}
-
-function addFilesToUploadList(files) {
-  const uploadList = document.getElementById('upload-list');
-  const startBtn = document.getElementById('upload-start-btn');
-
-  files.forEach(file => {
-    if (file.size > 500 * 1024 * 1024) {
-      showToast(`${file.name} is too large (max 500MB)`, 'error');
-      return;
-    }
-    const id = `upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
     const ext = file.name.split('.').pop().toLowerCase();
     const color = getFileIconColor(ext);
 
-    pendingUploads.push({ id, file, status: 'pending' });
-
-    const el = document.createElement('div');
-    el.className = 'upload-item';
-    el.id = id;
-    el.innerHTML = `
-      <div class="upload-item-icon" style="background: linear-gradient(135deg, ${color}, ${color}dd)">
-        ${getFileTypeIcon(ext)}
-      </div>
+    const item = document.createElement('div');
+    item.className = 'upload-sheet-item';
+    item.id = `ul-${Date.now()}-${i}`;
+    item.innerHTML = `
+      <div class="upload-item-icon" style="background:linear-gradient(135deg,${color},${color}dd)">${getFileTypeIcon(ext)}</div>
       <div class="upload-item-info">
         <div class="upload-item-name">${escapeHtml(file.name)}</div>
         <div class="upload-item-size">${formatSize(file.size)}</div>
         <div class="upload-item-progress"><div class="upload-item-progress-fill" style="width:0%"></div></div>
       </div>
-      <button class="upload-item-remove" onclick="removePendingUpload('${id}')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
+      <div class="upload-item-status pending">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+      </div>
     `;
-    uploadList.appendChild(el);
-  });
-
-  if (pendingUploads.length > 0) {
-    startBtn.style.display = 'inline-flex';
-  }
-}
-
-function removePendingUpload(id) {
-  pendingUploads = pendingUploads.filter(u => u.id !== id);
-  document.getElementById(id)?.remove();
-  if (pendingUploads.length === 0) {
-    document.getElementById('upload-start-btn').style.display = 'none';
-  }
-}
-
-async function startUpload() {
-  if (isUploading || pendingUploads.length === 0) return;
-  isUploading = true;
-
-  const startBtn = document.getElementById('upload-start-btn');
-  startBtn.disabled = true;
-  startBtn.textContent = 'Uploading...';
-
-  let successCount = 0;
-  let failCount = 0;
-
-  for (const item of pendingUploads) {
-    if (item.status !== 'pending') continue;
-    item.status = 'uploading';
-
-    const el = document.getElementById(item.id);
-    const progressFill = el?.querySelector('.upload-item-progress-fill');
-    const removeBtn = el?.querySelector('.upload-item-remove');
-
-    if (removeBtn) removeBtn.style.display = 'none';
+    list.appendChild(item);
 
     try {
+      const pFill = item.querySelector('.upload-item-progress-fill');
+      const status = item.querySelector('.upload-item-status');
+
+      status.className = 'upload-item-status uploading';
+      status.innerHTML = '<div class="spinner-sm"></div>';
+
       const formData = new FormData();
-      formData.append('files', item.file);
-      if (currentFolderId) formData.append('folder_id', currentFolderId);
+      formData.append('files', file);
 
       await API.upload('/files/upload', formData, (pct) => {
-        if (progressFill) progressFill.style.width = `${pct}%`;
+        if (pFill) pFill.style.width = `${pct}%`;
+        const overall = Math.round(((completed + (pct / 100)) / total) * 100);
+        fill.style.width = `${overall}%`;
+        text.textContent = `${overall}%`;
       });
 
-      item.status = 'done';
-      if (progressFill) {
-        progressFill.style.width = '100%';
-        progressFill.style.background = 'var(--success)';
-      }
-      successCount++;
-    } catch (error) {
-      item.status = 'error';
-      if (progressFill) {
-        progressFill.style.width = '100%';
-        progressFill.style.background = 'var(--danger)';
-      }
-      failCount++;
+      pFill.style.width = '100%';
+      pFill.style.background = '#34C759';
+      status.className = 'upload-item-status done';
+      status.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+      completed++;
+
+    } catch (err) {
+      const pFill = item.querySelector('.upload-item-progress-fill');
+      if (pFill) { pFill.style.width = '100%'; pFill.style.background = '#FF3B30'; }
+      const status = item.querySelector('.upload-item-status');
+      status.className = 'upload-item-status error';
+      status.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#FF3B30" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+      failed++;
     }
+
+    const pct = Math.round(((completed + failed) / total) * 100);
+    fill.style.width = `${pct}%`;
+    text.textContent = `${pct}%`;
   }
 
-  isUploading = false;
-  startBtn.disabled = false;
-  startBtn.textContent = 'Upload';
-  document.getElementById('upload-start-btn').style.display = 'none';
-
-  if (successCount > 0) {
-    showToast(`${successCount} file(s) uploaded successfully`, 'success');
-    loadProfile();
-    refreshCurrentPage();
+  if (completed > 0) {
+    showToast(`${completed} file(s) uploaded successfully`, 'success');
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      loadAllFiles();
+    }, 1200);
+  } else {
+    showToast('Upload failed', 'error');
+    setTimeout(() => overlay.style.display = 'none', 1500);
   }
-  if (failCount > 0) {
-    showToast(`${failCount} file(s) failed to upload`, 'error');
-  }
-
-  pendingUploads = [];
 }
