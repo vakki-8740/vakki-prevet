@@ -22,25 +22,20 @@
   <link rel="stylesheet" href="styles/players.css">
 </head>
 <body>
+  <div id="splash-screen">
+    <div class="splash-content">
+      <img src="https://i.ibb.co/rTy9bHY/image.webp" alt="Logo" width="96" height="96" style="border-radius:24px">
+      <h1>CloudVault</h1>
+    </div>
+  </div>
+
   <div id="app">
     <!-- Auth Pages -->
     <div id="auth-page" class="page active">
       <div class="auth-container">
         <div class="auth-card glass-card">
           <div class="auth-logo">
-            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-              <rect width="64" height="64" rx="16" fill="url(#logo-grad)"/>
-              <path d="M20 38C20 38 22 28 32 28C42 28 44 38 44 38" stroke="white" stroke-width="3" stroke-linecap="round"/>
-              <path d="M16 38C16 38 20 44 32 44C44 44 48 38 48 38" stroke="white" stroke-width="3" stroke-linecap="round"/>
-              <path d="M32 24V48" stroke="white" stroke-width="3" stroke-linecap="round"/>
-              <circle cx="32" cy="22" r="3" fill="white"/>
-              <defs>
-                <linearGradient id="logo-grad" x1="0" y1="0" x2="64" y2="64">
-                  <stop stop-color="#007AFF"/>
-                  <stop offset="1" stop-color="#5856D6"/>
-                </linearGradient>
-              </defs>
-            </svg>
+            <img src="https://i.ibb.co/rTy9bHY/image.webp" alt="Logo" width="80" height="80" style="border-radius:20px;margin-bottom:14px">
             <h1>CloudVault</h1>
             <p>Your personal cloud storage</p>
           </div>
@@ -105,14 +100,7 @@
       <aside id="sidebar" class="sidebar glass-sidebar">
         <div class="sidebar-header">
           <div class="logo">
-            <svg width="32" height="32" viewBox="0 0 64 64" fill="none">
-              <rect width="64" height="64" rx="16" fill="url(#logo-grad2)"/>
-              <path d="M20 38C20 38 22 28 32 28C42 28 44 38 44 38" stroke="white" stroke-width="3" stroke-linecap="round"/>
-              <path d="M16 38C16 38 20 44 32 44C44 44 48 38 48 38" stroke="white" stroke-width="3" stroke-linecap="round"/>
-              <path d="M32 24V48" stroke="white" stroke-width="3" stroke-linecap="round"/>
-              <circle cx="32" cy="22" r="3" fill="white"/>
-              <defs><linearGradient id="logo-grad2" x1="0" y1="0" x2="64" y2="64"><stop stop-color="#007AFF"/><stop offset="1" stop-color="#5856D6"/></linearGradient></defs>
-            </svg>
+            <img src="https://i.ibb.co/rTy9bHY/image.webp" alt="Logo" width="28" height="28" style="border-radius:8px">
             <span>CloudVault</span>
           </div>
           <button id="sidebar-close" class="sidebar-close-btn" onclick="toggleSidebar()">
@@ -725,6 +713,12 @@
   <div id="toast-container" class="toast-container"></div>
 
   <script src="config.js"></script>
+  <script>
+    setTimeout(() => {
+      const splash = document.getElementById('splash-screen');
+      if (splash) splash.remove();
+    }, 2000);
+  </script>
   <script src="scripts/api.js"></script>
   <script src="scripts/auth.js"></script>
   <script src="scripts/app.js"></script>

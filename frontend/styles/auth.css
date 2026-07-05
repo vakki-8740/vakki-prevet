@@ -18,11 +18,7 @@
   border-radius: var(--radius-xl);
 }
 
-.auth-logo {
-  text-align: center;
-  margin-bottom: 28px;
-}
-.auth-logo svg { margin-bottom: 14px; }
+.auth-logo { text-align: center; margin-bottom: 28px; }
 .auth-logo h1 {
   font-size: 26px;
   font-weight: 700;
