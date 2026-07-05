@@ -1,17 +1,22 @@
 const API = {
-  baseURL: '',
-  token: localStorage.getItem('token'),
+  baseURL: typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : 'http://localhost:3000/api',
+  token: localStorage.getItem('cloudvault_token'),
 
   async request(method, url, data = null, isFormData = false) {
     const headers = {};
     if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
     if (!isFormData) headers['Content-Type'] = 'application/json';
-    const config = { method, headers };
+    const config = { method, headers, mode: 'cors' };
     if (data) {
       config.body = isFormData ? data : JSON.stringify(data);
     }
     try {
-      const response = await fetch(`${this.baseURL}/api${url}`, config);
+      const response = await fetch(`${this.baseURL}${url}`, config);
+      if (response.status === 401) {
+        this.setToken(null);
+        window.location.reload();
+        throw new Error('Session expired');
+      }
       const json = await response.json();
       if (!response.ok) {
         throw new Error(json.error || 'Request failed');
@@ -19,7 +24,7 @@ const API = {
       return json;
     } catch (error) {
       if (error.message === 'Failed to fetch') {
-        throw new Error('Network error. Please check your connection.');
+        throw new Error('Backend server is not reachable. Please check the URL in config.js');
       }
       throw error;
     }
@@ -33,7 +38,8 @@ const API = {
   upload(url, formData, onProgress) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', `${this.baseURL}/api${url}`);
+      xhr.open('POST', `${this.baseURL}${url}`);
+      xhr.mode = 'cors';
       if (this.token) xhr.setRequestHeader('Authorization', `Bearer ${this.token}`);
       xhr.upload.onprogress = (e) => {
         if (e.lengthComputable && onProgress) {
@@ -49,14 +55,14 @@ const API = {
           reject(new Error('Upload failed'));
         }
       };
-      xhr.onerror = () => reject(new Error('Network error'));
+      xhr.onerror = () => reject(new Error('Network error. Backend server may be unreachable.'));
       xhr.send(formData);
     });
   },
 
   setToken(token) {
     this.token = token;
-    if (token) localStorage.setItem('token', token);
-    else localStorage.removeItem('token');
+    if (token) localStorage.setItem('cloudvault_token', token);
+    else localStorage.removeItem('cloudvault_token');
   }
 };

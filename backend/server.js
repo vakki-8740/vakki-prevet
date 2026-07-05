@@ -22,12 +22,27 @@ const dashboardRoutes = require('./routes/dashboard');
 const db = initDatabase();
 const app = express();
 
-app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
-app.use(cors());
+// Security headers
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: false,
+}));
+
+// CORS - Allow ALL origins for separate frontend hosting
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Disposition', 'Content-Type', 'Content-Length'],
+  credentials: true,
+}));
+
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Rate limiting
 const generalLimiter = rateLimit({
   windowMs: config.RATE_LIMIT_WINDOW,
   max: config.RATE_LIMIT_MAX,
@@ -44,30 +59,43 @@ app.use('/api/', generalLimiter);
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 
+// Initialize controllers
 const authCtrl = authController(db);
 const fileCtrl = fileController(db);
 const folderCtrl = folderController(db);
 const dashCtrl = dashboardController(db);
 const authenticate = authMiddleware(db);
 
+// Ensure uploads directory exists
 const uploadsDir = path.join(config.UPLOAD_DIR);
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
-app.use('/uploads', express.static(uploadsDir));
-app.use(express.static(config.FRONTEND_DIR));
+// Serve uploaded files (static, no auth needed for file preview via URL)
+app.use('/uploads', express.static(uploadsDir, {
+  setHeaders: (res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  }
+}));
 
+// API Routes
 app.use('/api/auth', authRoutes(authCtrl));
 app.use('/api/user', authenticate, userRoutes(authCtrl));
 app.use('/api/files', authenticate, fileRoutes(fileCtrl));
 app.use('/api/folders', authenticate, folderRoutes(folderCtrl));
 app.use('/api/dashboard', authenticate, dashboardRoutes(dashCtrl));
 
-app.get('/{*path}', (req, res) => {
-  if (!req.path.startsWith('/api/')) {
-    res.sendFile(path.join(config.FRONTEND_DIR, 'index.html'));
-  }
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// 404 for unknown API routes
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API endpoint not found' });
+});
+
+// Error handler
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
   if (err.code === 'LIMIT_FILE_SIZE') {
@@ -80,7 +108,8 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(config.PORT, () => {
-  console.log(`CloudStorage server running on http://localhost:${config.PORT}`);
+  console.log(`CloudVault API server running on http://localhost:${config.PORT}`);
+  console.log(`CORS enabled for all origins`);
 });
 
 module.exports = app;

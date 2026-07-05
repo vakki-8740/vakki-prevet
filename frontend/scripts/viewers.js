@@ -7,7 +7,7 @@ function openImageViewer(file) {
   const filename = document.getElementById('viewer-filename');
 
   filename.textContent = file.original_name;
-  img.src = `/api/files/${file.id}/preview`;
+  img.src = `${API.baseURL}/files/${file.id}/preview`;
   imageRotation = 0;
   imageScale = 1;
   img.style.transform = `rotate(${imageRotation}deg) scale(${imageScale})`;
@@ -36,7 +36,7 @@ function openVideoPlayer(file) {
   const filename = document.getElementById('video-filename');
 
   filename.textContent = file.original_name;
-  video.src = `/api/files/${file.id}/preview`;
+  video.src = `${API.baseURL}/files/${file.id}/preview`;
   player.style.display = 'flex';
   document.body.style.overflow = 'hidden';
   video.play().catch(() => {});
@@ -56,7 +56,7 @@ function openAudioPlayer(file) {
   const filename = document.getElementById('audio-filename');
 
   filename.textContent = file.original_name;
-  audio.src = `/api/files/${file.id}/preview`;
+  audio.src = `${API.baseURL}/files/${file.id}/preview`;
   player.style.display = 'flex';
   document.body.style.overflow = 'hidden';
   audio.play().catch(() => {});
@@ -81,7 +81,7 @@ async function openTextViewer(file) {
   content.textContent = 'Loading...';
 
   try {
-    const response = await fetch(`/api/files/${file.id}/preview`, {
+    const response = await fetch(`${API.baseURL}/files/${file.id}/preview`, {
       headers: { 'Authorization': `Bearer ${API.token}` }
     });
     const text = await response.text();
@@ -102,7 +102,7 @@ function openPdfViewer(file) {
   const filename = document.getElementById('pdf-filename');
 
   filename.textContent = file.original_name;
-  iframe.src = `/api/files/${file.id}/preview`;
+  iframe.src = `${API.baseURL}/files/${file.id}/preview`;
   viewer.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }

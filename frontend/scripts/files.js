@@ -96,7 +96,7 @@ function renderFileItem(file, container) {
 
   let preview = '';
   if (category === 'image') {
-    preview = `<img src="/api/files/${file.id}/preview" alt="${escapeHtml(file.original_name)}" loading="lazy">`;
+    preview = `<img src="${API.baseURL}/files/${file.id}/preview" alt="${escapeHtml(file.original_name)}" loading="lazy">`;
   } else {
     preview = `<div class="file-icon" style="background: linear-gradient(135deg, ${color}, ${color}dd)">${getFileTypeIcon(ext)}</div>`;
   }
@@ -314,7 +314,7 @@ function openFile(file) {
 
 async function downloadFile(fileId) {
   try {
-    const response = await fetch(`/api/files/${fileId}/download`, {
+    const response = await fetch(`${API.baseURL}/files/${fileId}/download`, {
       headers: { 'Authorization': `Bearer ${API.token}` }
     });
     if (!response.ok) throw new Error('Download failed');
