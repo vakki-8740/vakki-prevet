@@ -234,6 +234,7 @@ async function loadDashboard() {
 async function loadSettings() {
   if (!currentUser) return;
   document.getElementById('settings-name').value = currentUser.name || '';
+  document.getElementById('settings-username').value = currentUser.username || '';
   document.getElementById('settings-email').value = currentUser.email || '';
   document.getElementById('settings-joined').textContent = currentUser.created_at ? new Date(currentUser.created_at).toLocaleDateString() : '-';
 
@@ -255,9 +256,10 @@ async function loadSettings() {
 
 async function updateProfile() {
   const name = document.getElementById('settings-name').value.trim();
+  const username = document.getElementById('settings-username').value.trim();
   const email = document.getElementById('settings-email').value.trim();
   try {
-    const result = await API.put('/user/profile', { name, email });
+    const result = await API.put('/user/profile', { name, username: username || undefined, email });
     currentUser = result.user;
     updateUserUI();
     showToast('Profile updated', 'success');

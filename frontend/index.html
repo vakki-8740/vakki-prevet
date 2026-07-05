@@ -65,6 +65,7 @@
                 <span class="checkmark"></span>
                 Remember me
               </label>
+              <a href="#" class="forgot-link" onclick="showForgotPassword(event)">Forgot Password?</a>
             </div>
             <button type="submit" class="btn btn-primary btn-full">
               <span>Sign In</span>
@@ -79,6 +80,13 @@
               <div class="input-wrapper">
                 <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <input type="text" id="register-name" placeholder="Enter your name" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Username <span class="optional">(optional)</span></label>
+              <div class="input-wrapper">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input type="text" id="register-username" placeholder="Choose a username" pattern="[a-zA-Z0-9_]{3,30}">
               </div>
             </div>
             <div class="form-group">
@@ -421,6 +429,10 @@
                     <input type="text" id="settings-name" placeholder="Your name">
                   </div>
                   <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="settings-username" placeholder="Your username" pattern="[a-zA-Z0-9_]{3,30}">
+                  </div>
+                  <div class="form-group">
                     <label>Email</label>
                     <input type="email" id="settings-email" placeholder="Your email">
                   </div>
@@ -656,6 +668,28 @@
     </div>
     <div class="player-body">
       <iframe id="pdf-iframe" src="" frameborder="0"></iframe>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgot-modal" class="modal glass-modal">
+    <div class="modal-header">
+      <h2>Reset Password</h2>
+      <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">Enter your email address and we'll send you a link to reset your password.</p>
+      <div class="form-group">
+        <label>Email</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 4-10 8L2 4"/></svg>
+          <input type="email" id="forgot-email" placeholder="Enter your email" required>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="sendForgotPassword()">Send Reset Link</button>
     </div>
   </div>
 

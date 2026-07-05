@@ -38,13 +38,14 @@ async function handleLogin(e) {
 async function handleRegister(e) {
   e.preventDefault();
   const name = document.getElementById('register-name').value.trim();
+  const username = document.getElementById('register-username').value.trim();
   const email = document.getElementById('register-email').value.trim();
   const password = document.getElementById('register-password').value;
   try {
     const btn = e.target.querySelector('button[type="submit"]');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px"></span>';
-    const result = await API.post('/auth/register', { name, email, password });
+    const result = await API.post('/auth/register', { name, username: username || undefined, email, password });
     API.setToken(result.token);
     currentUser = result.user;
     showMainApp();
@@ -104,4 +105,25 @@ function showRegister(e) {
 function togglePasswordVisibility(id) {
   const input = document.getElementById(id);
   input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function showForgotPassword(e) {
+  if (e) e.preventDefault();
+  document.getElementById('forgot-email').value = '';
+  openModal('forgot-modal');
+}
+
+async function sendForgotPassword() {
+  const email = document.getElementById('forgot-email').value.trim();
+  if (!email) {
+    showToast('Please enter your email', 'warning');
+    return;
+  }
+  try {
+    const result = await API.post('/auth/forgot-password', { email });
+    closeModal();
+    showToast(result.message, 'success');
+  } catch (error) {
+    showToast(error.message, 'error');
+  }
 }
