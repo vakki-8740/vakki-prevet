@@ -6,6 +6,10 @@ function downloadCurrentFile() {
   if (currentFile) downloadFile(currentFile.id);
 }
 
+function deleteCurrentFile() {
+  if (currentFile) deleteFile(currentFile.id);
+}
+
 function openImageViewer(file) {
   currentFile = file;
   const viewer = document.getElementById('image-viewer');
@@ -66,6 +70,7 @@ function closeVideoPlayer() {
 }
 
 function openAudioPlayer(file) {
+  currentFile = file;
   const player = document.getElementById('audio-player');
   const audio = document.getElementById('audio-element');
   const filename = document.getElementById('audio-filename');
@@ -86,6 +91,7 @@ function closeAudioPlayer() {
 }
 
 async function openTextViewer(file) {
+  currentFile = file;
   const viewer = document.getElementById('text-viewer');
   const content = document.getElementById('text-content');
   const filename = document.getElementById('text-filename');
@@ -112,6 +118,7 @@ function closeTextViewer() {
 }
 
 function openPdfViewer(file) {
+  currentFile = file;
   const viewer = document.getElementById('pdf-viewer');
   const iframe = document.getElementById('pdf-iframe');
   const filename = document.getElementById('pdf-filename');

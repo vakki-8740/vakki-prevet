@@ -252,6 +252,21 @@ input, button, textarea { font-family: var(--font); }
 .file-card .dl-btn svg { width: 16px; height: 16px; }
 .file-card .dl-btn:hover { background: var(--primary-light); color: var(--primary); }
 
+.file-card .del-btn {
+  width: 32px; height: 32px;
+  border: none; background: var(--bg-tertiary);
+  border-radius: 8px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #FF3B30;
+  opacity: 0;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+.file-card:hover .del-btn,
+.file-card:focus-within .del-btn { opacity: 1; }
+.file-card .del-btn svg { width: 16px; height: 16px; }
+.file-card .del-btn:hover { background: rgba(255,59,48,0.12); color: #FF3B30; }
+
 /* ===== LOADING & EMPTY ===== */
 .loading-wrap {
   display: flex; align-items: center; justify-content: center;
