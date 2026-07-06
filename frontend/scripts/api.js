@@ -15,9 +15,8 @@ const API = {
     }
     try {
       const response = await fetch(`${this.baseURL}${url}`, config);
-      if (response.status === 401) {
+      if (response.status === 401 && url !== '/auth/login' && url !== '/auth/register') {
         this.setToken(null);
-        window.location.reload();
         throw new Error('Session expired');
       }
       const json = await response.json();
@@ -27,7 +26,7 @@ const API = {
       return json;
     } catch (error) {
       if (error.message === 'Failed to fetch') {
-        throw new Error('Backend server is not reachable. Please check the URL in config.js');
+        throw new Error('Cannot reach server. Please try again.');
       }
       throw error;
     }
