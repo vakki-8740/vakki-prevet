@@ -1,7 +1,13 @@
 let imageRotation = 0;
 let imageScale = 1;
+let currentFile = null;
+
+function downloadCurrentFile() {
+  if (currentFile) downloadFile(currentFile.id);
+}
 
 function openImageViewer(file) {
+  currentFile = file;
   const viewer = document.getElementById('image-viewer');
   const img = document.getElementById('viewer-image');
   const filename = document.getElementById('viewer-filename');
@@ -14,6 +20,10 @@ function openImageViewer(file) {
   viewer.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
+
+document.getElementById('image-viewer').addEventListener('click', function(e) {
+  if (e.target === this) closeImageViewer();
+});
 
 function closeImageViewer() {
   document.getElementById('image-viewer').style.display = 'none';
@@ -31,6 +41,7 @@ function zoomImage(delta) {
 }
 
 function openVideoPlayer(file) {
+  currentFile = file;
   const player = document.getElementById('video-player');
   const video = document.getElementById('video-element');
   const filename = document.getElementById('video-filename');
@@ -41,6 +52,10 @@ function openVideoPlayer(file) {
   document.body.style.overflow = 'hidden';
   video.play().catch(() => {});
 }
+
+document.getElementById('video-player').addEventListener('click', function(e) {
+  if (e.target === this) closeVideoPlayer();
+});
 
 function closeVideoPlayer() {
   const video = document.getElementById('video-element');

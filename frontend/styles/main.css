@@ -242,7 +242,7 @@ input, button, textarea { font-family: var(--font); }
   border: none; background: var(--bg-tertiary);
   border-radius: 8px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary);
+  color: var(--primary);
   opacity: 0;
   transition: all var(--transition);
   flex-shrink: 0;
