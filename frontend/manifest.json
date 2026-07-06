@@ -1,6 +1,6 @@
 {
-  "name": "CloudVault - Personal Cloud Storage",
-  "short_name": "CloudVault",
+  "name": "VAKKI PRIVET - Personal Cloud Storage",
+  "short_name": "VAKKI PRIVET",
   "description": "Your personal cloud storage application",
   "start_url": "/",
   "display": "standalone",
