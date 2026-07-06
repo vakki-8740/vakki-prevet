@@ -129,14 +129,19 @@ input, button, textarea { font-family: var(--font); }
 .header-left { display: flex; align-items: center; gap: 10px; }
 .header-title { font-size: 18px; font-weight: 700; }
 
-#logout-btn {
+#logout-btn,
+#export-all-btn {
   width: 38px; height: 38px; border: none; background: var(--bg);
   border-radius: var(--radius-sm); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   color: var(--text-secondary); transition: all var(--transition);
+  gap: 2px;
 }
 #logout-btn:hover { background: rgba(255,59,48,0.1); color: var(--danger); }
 #logout-btn svg { width: 20px; height: 20px; }
+
+#export-all-btn svg { width: 18px; height: 18px; }
+#export-all-btn span { font-size: 10px; font-weight: 600; }
 
 /* ===== FILES ===== */
 #main-files {
