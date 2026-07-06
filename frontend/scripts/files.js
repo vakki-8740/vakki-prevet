@@ -122,3 +122,28 @@ async function deleteFile(fileId) {
     showToast(error.message, 'error');
   }
 }
+
+async function exportAllFiles() {
+  try {
+    showToast('Preparing export...', 'info');
+    const response = await fetch(`${API.baseURL}/files/export-all`, {
+      headers: { 'Authorization': `Bearer ${API.token}` }
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Export failed');
+    }
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'vakki-prevet-export.zip';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Export downloaded', 'success');
+  } catch (error) {
+    showToast(error.message, 'error');
+  }
+}

@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const archiver = require('archiver');
 const config = require('../config/config');
 const { getFileCategory, paginate, sortFiles, formatFileSize } = require('../utils/helpers');
 
@@ -322,7 +323,33 @@ function fileController(db) {
     }
   };
 
-  return { upload, list, download, downloadMultiple, preview, rename, remove, permanentDelete, restore, toggleFavorite, getFavorites, getRecycleBin, move, copy, duplicate, getProperties };
+  const exportAll = (req, res) => {
+    try {
+      const files = db.prepare('SELECT * FROM files WHERE owner_id = ? AND is_deleted = 0 ORDER BY original_name').all(req.user.id);
+      if (files.length === 0) return res.status(404).json({ error: 'No files to export' });
+
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', 'attachment; filename="vakki-prevet-export.zip"');
+
+      const archive = archiver('zip', { zlib: { level: 5 } });
+      archive.on('error', (err) => { throw err; });
+      archive.pipe(res);
+
+      files.forEach(file => {
+        const filePath = path.join(config.UPLOAD_DIR, String(req.user.id), file.name);
+        if (fs.existsSync(filePath)) {
+          archive.file(filePath, { name: file.original_name });
+        }
+      });
+
+      archive.finalize();
+    } catch (error) {
+      console.error('Export error:', error);
+      if (!res.headersSent) res.status(500).json({ error: 'Export failed' });
+    }
+  };
+
+  return { upload, list, download, downloadMultiple, preview, rename, remove, permanentDelete, restore, toggleFavorite, getFavorites, getRecycleBin, move, copy, duplicate, getProperties, exportAll };
 }
 
 module.exports = fileController;

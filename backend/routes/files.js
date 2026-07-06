@@ -9,6 +9,7 @@ function fileRoutes(fileCtrl) {
   router.get('/', fileCtrl.list);
   router.get('/favorites', fileCtrl.getFavorites);
   router.get('/recycle-bin', fileCtrl.getRecycleBin);
+  router.get('/export-all', fileCtrl.exportAll);
   router.get('/:id/download', fileCtrl.download);
   router.get('/:id/preview', fileCtrl.preview);
   router.get('/:id/properties', fileCtrl.getProperties);
