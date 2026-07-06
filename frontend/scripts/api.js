@@ -1,6 +1,9 @@
+let _savedToken = null;
+try { _savedToken = localStorage.getItem('cloudvault_token'); } catch(e) {}
+
 const API = {
   baseURL: typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : 'http://localhost:3000/api',
-  token: localStorage.getItem('cloudvault_token'),
+  token: _savedToken,
 
   async request(method, url, data = null, isFormData = false) {
     const headers = {};
@@ -62,7 +65,9 @@ const API = {
 
   setToken(token) {
     this.token = token;
-    if (token) localStorage.setItem('cloudvault_token', token);
-    else localStorage.removeItem('cloudvault_token');
+    try {
+      if (token) localStorage.setItem('cloudvault_token', token);
+      else localStorage.removeItem('cloudvault_token');
+    } catch(e) {}
   }
 };
