@@ -13,7 +13,7 @@ function openImageViewer(file) {
   const filename = document.getElementById('viewer-filename');
 
   filename.textContent = file.original_name;
-  img.src = `${API.baseURL}/files/${file.id}/preview`;
+  img.src = `${BACKEND_URL}${file.file_path}`;
   imageRotation = 0;
   imageScale = 1;
   img.style.transform = `rotate(${imageRotation}deg) scale(${imageScale})`;
@@ -47,7 +47,7 @@ function openVideoPlayer(file) {
   const filename = document.getElementById('video-filename');
 
   filename.textContent = file.original_name;
-  video.src = `${API.baseURL}/files/${file.id}/preview`;
+  video.src = `${BACKEND_URL}${file.file_path}`;
   player.style.display = 'flex';
   document.body.style.overflow = 'hidden';
   video.play().catch(() => {});
@@ -71,7 +71,7 @@ function openAudioPlayer(file) {
   const filename = document.getElementById('audio-filename');
 
   filename.textContent = file.original_name;
-  audio.src = `${API.baseURL}/files/${file.id}/preview`;
+  audio.src = `${BACKEND_URL}${file.file_path}`;
   player.style.display = 'flex';
   document.body.style.overflow = 'hidden';
   audio.play().catch(() => {});
@@ -117,7 +117,7 @@ function openPdfViewer(file) {
   const filename = document.getElementById('pdf-filename');
 
   filename.textContent = file.original_name;
-  iframe.src = `${API.baseURL}/files/${file.id}/preview`;
+  iframe.src = `${BACKEND_URL}${file.file_path}`;
   viewer.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }

@@ -79,7 +79,7 @@ app.use('/uploads', express.static(uploadsDir, {
 }));
 
 // API Routes
-app.use('/api/auth', authRoutes(authCtrl));
+app.use('/api/auth', authRoutes(authCtrl, authenticate));
 app.use('/api/user', authenticate, userRoutes(authCtrl));
 app.use('/api/files', authenticate, fileRoutes(fileCtrl));
 app.use('/api/folders', authenticate, folderRoutes(folderCtrl));

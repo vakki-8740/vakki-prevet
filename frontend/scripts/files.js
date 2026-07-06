@@ -30,7 +30,7 @@ async function loadAllFiles() {
       let preview = '';
 
       if (category === 'image') {
-        preview = `<img src="${API.baseURL}/files/${file.id}/preview" alt="${escapeHtml(file.original_name)}" loading="lazy">`;
+        preview = `<img src="${BACKEND_URL}${escapeHtml(file.file_path)}" alt="${escapeHtml(file.original_name)}" loading="lazy">`;
       } else if (category === 'video') {
         preview = `
           <div class="file-icon" style="background:linear-gradient(135deg,${color},${color}dd)">
