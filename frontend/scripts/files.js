@@ -33,9 +33,7 @@ async function loadAllFiles() {
         preview = `<img src="${BACKEND_URL}${escapeHtml(file.file_path)}" alt="${escapeHtml(file.original_name)}" loading="lazy">`;
       } else if (category === 'video') {
         preview = `
-          <div class="file-icon" style="background:linear-gradient(135deg,${color},${color}dd)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="32" height="32"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          </div>
+          <video src="${BACKEND_URL}${escapeHtml(file.file_path)}" preload="metadata" muted playsinline></video>
           <div class="play-badge">
             <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>`;
